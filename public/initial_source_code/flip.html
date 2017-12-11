@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style type="text/css">
+    .container { 
+      width: 165px;
+      height: 165px;
+      position: relative;
+      display: inline-block;
+    }
+
+    #card {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      transform-style: preserve-3d;
+      transition: transform 1.2s;
+    }
+
+    #card figure {
+      margin: 0;
+      display: block;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+    }
+
+    #card .front {
+      /* background: red; */
+      background-image: url("../img/cards/back.png");
+      background-position: fixed;
+      background-repeat: no-repeat;
+    }
+    #card .back {
+      /* background: blue; */
+      background-image: url("../img/cards/2.png");
+      background-position: fixed;
+      background-repeat: no-repeat;
+      transform: rotateY( 180deg );
+    }
+
+    #card.flipped {
+      transform: rotateY( 180deg );
+    }
+  </style>
+</head>
+<body>
+  <section class="container">
+    <div id="card" onclick="flip(event)">
+      <figure class="front">1</figure>
+      <figure class="back">2</figure>
+    </div>
+  </section>
+  <section class="container">
+    <div id="card" onclick="flip()">
+      <figure class="front">1</figure>
+      <figure class="back">2</figure>
+    </div>
+  </section>
+  <script>
+    document.querySelectorAll('#card').forEach(function(card){
+      card.onclick = flip;
+    })
+
+    function flip(e) {
+      this.classList.toggle("flipped");
+    }
+  </script>
+</body>
+</html>

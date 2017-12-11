@@ -1,0 +1,64 @@
+.header {
+    background-color: lightblue;
+    padding: 20px;
+    border-bottom: 10px solid darkcyan;
+    color:darkcyan;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.header img {
+    float:right;
+}
+
+#welcomemessagecontainer ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+#welcomemessagecontainer ul li { display: inline; }
+
+#welcome-message {
+    font-size:30px;
+}
+
+.card, .front, .back {
+    height: 165px;
+    width: 165px; 
+}
+
+.card {
+    float: left;
+    background-color: pink;   
+    margin: 5px;
+    position: relative;
+    /* -webkit-transition: property duration timing-function delay;
+    -moz-transition: property duration timing-function delay; */
+    transition: transform 0.25s;
+}
+
+.card.flipped {
+    transform: rotateY(180deg);
+}
+
+.card .front, 
+.card .back {
+	backface-visibility: hidden;    
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.front {
+    transform: rotateY(180deg);
+}
+
+.btn-playagain {
+    display: none;
+    padding: 5px;
+    font-size: 20px;
+    border-radius: 10px;
+    background-color: lightblue;
+    cursor: pointer;
+}

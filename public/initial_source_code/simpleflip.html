@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style type="text/css">
+    .card {
+      position: relative;
+      display: inline-block;
+      width: 165px;
+      height: 165px;
+      transform-style: preserve-3d;
+      transition: transform 1s;
+    }
+
+    .card.flipped {
+      transform: rotateY( 180deg );
+    }
+
+    .card img {
+      position: absolute;
+      display: block;
+      backface-visibility: hidden;
+    }
+
+    .card img.front {
+      background-color: white;
+      transform: rotateY( 180deg );
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img class="back" src="../img/cards/back.png" />
+    <img class="front" src="../img/cards/2.png" />
+  </div>
+  <div class="card">
+    <img class="back" src="../img/cards/back.png" />
+    <img class="front" src="../img/cards/1.png" />
+  </div>
+  <script>
+    document.querySelectorAll('.card').forEach(function(card) {
+      card.onclick = function() {
+        this.classList.toggle('flipped');
+      }
+    });
+  </script>
+</body>
+</html>

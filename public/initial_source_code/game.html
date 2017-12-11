@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>My App</title>
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+
+<body>
+  <div class="header">
+    <img src="img/layout/logo.png">
+    <h1>Memory Monsters</h1>
+  </div>
+  <div id="welcomemessagecontainer">
+    <ul>
+      <li id="welcome-message"></li>
+      <li><button class="btn-notyou" onclick="notYou()">Not You?</button></li>
+    </ul>
+  </div>
+  <h3>Best Time: <span id="best-time"></span></h3>
+  <button class="btn-playagain" onClick="toggleVisibility('.btn-playagain');resetBoard();">Play Again!</button>
+  <div class="board"></div>
+
+  <template id="card-template">
+    <div class="card" data-card="" onclick="cardClicked(this)">
+      <div class="front">
+          <img src="">
+      </div>
+      <div class="back">
+          <img src="img/cards/back.png">
+      </div>
+    </div>      
+  </template>
+
+  <script src="js/app.js"></script>
+</body>
+
+</html>

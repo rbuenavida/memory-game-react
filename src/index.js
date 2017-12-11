@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import Game from './Game.js';
+
 import css from './style.css';
 
-function NewComponent(props) {
-  return <div className="card">
-    This is a card
-  </div>
+const NewComponent = (props) => {
+  return <Game />
 }
 
 ReactDOM.render(

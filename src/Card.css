@@ -1,0 +1,25 @@
+.card {
+  position: relative;
+  display: inline-block;
+  width: 165px;
+  height: 165px;
+  margin: 5px;
+  transform-style: preserve-3d;
+  transition: transform 1s;
+  cursor: pointer;
+}
+
+.card.flipped {
+  transform: rotateY( 180deg );
+}
+
+.card img {
+  position: absolute;
+  display: block;
+  backface-visibility: hidden;
+}
+
+.card img.front {
+  background-color: white;
+  transform: rotateY( 180deg );
+}
