@@ -9,65 +9,66 @@ const CARD_NOT_FLIPPED = 0
 const CARD_FLIPPED = 1
 const CARD_FLIPPED_PENDING = 2
 
+const CARD_KEY_PREFIX = 'card'
+
 class Game extends Component {
   constructor(props) {
     super(props);
 
     // randomly select images
     let images = _.shuffle(props.images).splice(LEVEL_EASY, props.images.length - LEVEL_EASY);
+    
     // duplicate and shuffle
     this.imageLinks = _.shuffle([].concat(images, images));
-    this.matchingIndexes = [];
     
-    this.imageLinks.forEach((link1, idx1) => {
-      this.imageLinks.forEach((link2, idx2) => {
-        if ((link1 === link2) && (idx1 !== idx2)) {
-          this.matchingIndexes.push(idx2)
-        }       
-      });
-      
-      this.state = {}
-      this.state['card' + idx1] = CARD_NOT_FLIPPED;
+    // get matching indexes
+    this.matchingIndexes = _.map(this.imageLinks, (val1, index1) => { 
+      return _.findIndex(this.imageLinks, (val2, index2) => { 
+        return (val1 === val2 && index1 !== index2) 
+      }) 
     })
+    
+    // set state with card defaults
+    this.state = this.cardStatus(this.imageLinks, CARD_NOT_FLIPPED);
+  }
 
-    // console.log(this.imageLinks)
-    // console.log('matching indexes', this.matchingIndexes)
-    // console.log(this.state)
-
+  cardKeyName(index) {
+    return [CARD_KEY_PREFIX, index].join("")
+  }
+  
+  cardStatus(indexes, status) {
+    return _.reduce(indexes, (result, val, key) => {
+      result[this.cardKeyName(val)] = status;
+      return result
+    }, {});
   }
 
   // if two cards are flipped over, check if they match
   onCardClicked(index) {
-    let cardsPendingFlipped = [];
-    let cards = {}
-    let cardsMatched = (this.state['card' + this.matchingIndexes[index]] === CARD_FLIPPED_PENDING);
+    let kn = this.cardKeyName
+    
+    // do cards match
+    const cardsMatched = (this.state[kn(this.matchingIndexes[index])] === CARD_FLIPPED_PENDING);
+    
+    // which cards are flipped pending
+    let cardsFlippedPending = _.filter(this.matchingIndexes, (val, idx) => {
+      return (this.state[kn(val)] === CARD_FLIPPED_PENDING)
+    })
 
-    this.matchingIndexes.forEach((matchingIndex) => {
-      if (this.state['card' + matchingIndex] == CARD_FLIPPED_PENDING) {
-        cardsPendingFlipped.push(matchingIndex);
-      }
-    });
-
-    if (this.state['card' + index] > 0 || (cardsPendingFlipped.length === 2)) return;
+    if (this.state[kn(index)] > 0 || (cardsFlippedPending.length === 2)) return;
     
     // if previouly card selected matches
     if (cardsMatched) {
-      cards['card' + index] = CARD_FLIPPED;
-      cards['card' + this.matchingIndexes[index]] = CARD_FLIPPED
+      this.setState(this.cardStatus([index, this.matchingIndexes[index]], CARD_FLIPPED))
     } else {
-      cards['card' + index] = CARD_FLIPPED_PENDING;
-      cardsPendingFlipped.push(index);
+      this.setState(this.cardStatus([index], CARD_FLIPPED_PENDING))
+      cardsFlippedPending.push(index);
     }
     
-    this.setState(cards);
-    
-    if (cardsPendingFlipped.length === 2 && !cardsMatched) {
+    // if we have unmatched cards
+    if (cardsFlippedPending.length === 2 && !cardsMatched) {
       setTimeout(() => {
-        let cards = {}
-        cardsPendingFlipped.forEach((num) => {
-          cards['card' + num] = CARD_NOT_FLIPPED
-        })
-         this.setState(cards);
+        this.setState(this.cardStatus(cardsFlippedPending, CARD_NOT_FLIPPED))
       }, 1500)
     }
   }
@@ -76,7 +77,7 @@ class Game extends Component {
     const cards = this.imageLinks.map((link, idx) => {
       return {
         imageSrc: link,
-        flipped: (this.state['card' + idx] === 1 || this.state['card' + idx] === 2)  
+        flipped: ([CARD_FLIPPED, CARD_FLIPPED_PENDING].indexOf(this.state[this.cardKeyName(idx)]) >= 0) 
       }
     })
 
