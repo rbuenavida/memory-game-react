@@ -10,7 +10,7 @@ const GameBoard = (props) => {
       key={idx} 
       flip={card.flipped} 
       onClick={props.onCardClicked} 
-      frontImgSrc={"img/cards/" + card.num + ".png"} 
+      frontImgSrc={card.imageSrc} 
       backImgSrc="img/cards/back.png" />
   });
 
