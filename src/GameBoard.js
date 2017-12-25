@@ -11,7 +11,7 @@ const GameBoard = (props) => {
       flip={card.flipped} 
       onClick={props.onCardClicked} 
       frontImgSrc={card.imageSrc} 
-      backImgSrc="img/cards/back.png" />
+      backImgSrc="/public/img/cards/back.png" />
   });
 
   return <div>{ cards }</div>  

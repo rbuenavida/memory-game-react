@@ -7,7 +7,7 @@ import css from './style.css';
 
 // our 8 monster images
 const MONSTER_IMAGES = _.range(1, 9).map((n) => {
-  return ['img/cards/', n, '.png'].join('')
+  return ['/public/img/cards/', n, '.png'].join('')
 })
 
 const NewComponent = (props) => {
