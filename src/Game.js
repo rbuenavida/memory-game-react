@@ -19,50 +19,46 @@ class Game extends Component {
     // duplicate and shuffle
     this.imageLinks = _.shuffle([].concat(images, images));
     
-    // get matching indexes, not part of state since it doesn't change
-    this.matchingIndexes = _.map(this.imageLinks, (val1, index1) => { 
-      return _.findIndex(this.imageLinks, (val2, index2) => { 
-        return (val1 === val2 && index1 !== index2) 
-      }) 
-    })
-    
     this.state = {
-      cards: _.fill(Array(this.matchingIndexes.length), CARD_NOT_FLIPPED)
+      cards: _.fill(Array(this.imageLinks.length), CARD_NOT_FLIPPED)
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    let currentlyFlipped = this.findCardsByStatus(this.state.cards, CARD_FLIPPED_WAITING)
+    let currentlyFlipped = this.findIndexByStatus(this.state.cards, CARD_FLIPPED_WAITING)
     
     if (currentlyFlipped.length === 2) {
       this.unflipCards(currentlyFlipped, 1500)
     }
   }
 
-  findCardsByStatus(cards, status) {
+  findIndexByStatus(cards, status) {
     return _.reduce(cards, (result, val, idx) => {
       if (val === status) result.push(idx)
       return result
     }, [])
   }
 
+  updateStatusByIndex(source, indexes, status) {
+    return source.map((val, index) => (indexes.indexOf(index) >= 0) ? status : val)
+  }
+
   cardsMatch(index, indexes) {
-    const vals = _.map(indexes, (val) => { 
-      return _.nth(this.matchingIndexes, val) 
-    })
-    return (vals.indexOf(index) >= 0);
+    const link = this.imageLinks[index] // get link
+    const vals = _.map(indexes, (val) => _.nth(this.imageLinks, val))
+    return (vals.indexOf(link) >= 0)
+  }
+
+  getUpdateCardsFn(indexesToUpdate, status) {
+    const fn = (prevState) => {
+      let cards = this.updateStatusByIndex(prevState.cards, indexesToUpdate, status)
+      return { cards: cards }
+    }
+    return fn
   }
 
   unflipCards(indexes, timeout) {
-    // which cards are already flipped and waiting
-    const fn = (prevState) => {
-      let cards = [...prevState.cards]
-      _.each(indexes, function(index) {
-        cards[index] = CARD_NOT_FLIPPED
-      })
-      return { cards: cards }
-    }
-
+    const fn = this.getUpdateCardsFn(indexes, CARD_NOT_FLIPPED)
     if (timeout) {
       setTimeout(() => { this.setState(fn) }, timeout);
     } else {
@@ -74,23 +70,19 @@ class Game extends Component {
   onCardClicked(indexClicked) {
     const clickedCardState = this.state.cards[indexClicked]
     // which cards are already flipped and waiting
-    const previouslyFlipped = this.findCardsByStatus(this.state.cards, CARD_FLIPPED_WAITING)
+    const previouslyFlipped = this.findIndexByStatus(this.state.cards, CARD_FLIPPED_WAITING)
+
+    let indexesToUpdate = [indexClicked]
+    let statusToUpdate = CARD_FLIPPED_WAITING
 
     if (clickedCardState > CARD_NOT_FLIPPED || previouslyFlipped.length === 2) return
 
-    // do cards match
-    const isCardsMatched = this.cardsMatch(indexClicked, previouslyFlipped)
+    if (this.cardsMatch(indexClicked, previouslyFlipped)) {
+      indexesToUpdate = _.concat(indexesToUpdate, previouslyFlipped)
+      statusToUpdate = CARD_FLIPPED
+    } 
     
-    this.setState((prevState) => {
-      let cards = [...prevState.cards]
-      if (isCardsMatched) {
-        cards[indexClicked] = CARD_FLIPPED
-        cards[previouslyFlipped] = CARD_FLIPPED
-      } else {
-        cards[indexClicked] = CARD_FLIPPED_WAITING
-      }
-      return { cards: cards }
-    })
+    this.setState(this.getUpdateCardsFn(indexesToUpdate, statusToUpdate))
   }
 
   render() {
